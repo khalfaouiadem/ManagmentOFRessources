@@ -24,21 +24,11 @@ services:
     networks:
       - appnet
 
+
   db:
     image: mysql:8.0
-    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ""   # mot de passe vide (à éviter en prod)
+      MYSQL_ROOT_PASSWORD: ""
       MYSQL_DATABASE: Telecom
     ports:
       - "3306:3306"
-    volumes:
-      - dbdata:/var/lib/mysql
-    networks:
-      - appnet
-
-volumes:
-  dbdata:
-
-networks:
-  appnet:
