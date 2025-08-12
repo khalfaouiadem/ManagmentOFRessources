@@ -102,4 +102,16 @@
         "symfony/stopwatch": "7.3.*",
         "symfony/web-profiler-bundle": "7.3.*"
     }
+    ,"scripts": {
+    "auto-scripts": [
+        "symfony-cmd",
+        "cache:clear"
+    ],
+    "post-install-cmd": [
+        "@auto-scripts"
+    ],
+    "post-update-cmd": [
+        "@auto-scripts"
+    ]
+}
 }
