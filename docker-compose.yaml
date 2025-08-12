@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   php:
     build:
@@ -7,6 +9,8 @@ services:
       - .:/app
     networks:
       - appnet
+    depends_on:
+      - db
 
   nginx:
     image: nginx:stable-alpine
@@ -19,6 +23,22 @@ services:
       - php
     networks:
       - appnet
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ""   # mot de passe vide (à éviter en prod)
+      MYSQL_DATABASE: Telecom
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - appnet
+
+volumes:
+  dbdata:
 
 networks:
   appnet:
