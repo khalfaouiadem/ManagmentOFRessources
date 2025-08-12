@@ -1,0 +1,200 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un Matériel{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <style>
+    /* Background image full page */
+    .page-header {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .page-header .mask {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 0;
+    }
+
+    /* Card with higher z-index to be on top of mask */
+    .card {
+      position: relative;
+      z-index: 1;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+    }
+
+    h4 {
+      font-weight: 700;
+      color: #212529;
+    }
+
+    /* Input & select style */
+    .form-control, .form-select {
+      border: 1.5px solid #ced4da;
+      border-radius: 0.5rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #fff;
+      color: #212529;
+      box-shadow: none;
+    }a
+
+    .form-control::placeholder {
+      color: #adb5bd;
+    }
+
+    /* Hover and focus effects */
+    .form-control:hover, 
+    .form-select:hover,
+    .form-control:focus, 
+    .form-select:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 8px rgba(13, 110, 253, 0.3);
+      outline: none;
+      background-color: #fff;
+      color: #212529;
+    }
+
+    /* Select2 overrides */
+    .select2-container--default .select2-selection--single {
+      height: 45px;
+      padding: 6px 12px;
+      border-radius: 0.5rem;
+      border: 1.5px solid #ced4da;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-size: 1rem;
+    }
+    .select2-container--default.select2-container--focus .select2-selection--single {
+      border-color: #0d6efd;
+      box-shadow: 0 0 8px rgba(13, 110, 253, 0.3);
+      outline: none;
+    }
+    .select2-results__option img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    .select2-results__option img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s ease;
+    }
+    .select2-selection__rendered img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    /* Button style */
+    button.btn-dark {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-radius: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    button.btn-dark:hover {
+      background-color: #0b5ed7;
+      box-shadow: 0 0 15px rgba(13, 110, 253, 0.5);
+    }
+
+  </style>
+{% endblock %}
+
+{% block body %}
+<main class="main-content mt-0">
+  <div class="page-header" 
+       style="background-image: url('https://media.istockphoto.com/id/1448246714/vector/abstract-polygonal-space-triangles-with-connecting-dots-and-lines-background-concept-for.jpg?s=612x612&w=0&k=20&c=5Bq5Pt8vHTYo4V82ZLSRGIr3y9sRA5q9KqOniVBomIc=');">
+    <span class="mask"></span>
+
+    <div class="container my-auto">
+      <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-12">
+          <div class="card">
+            <h4 class="text-center mb-4">Ajouter un Matériel</h4>
+            {{ form_start(form) }}
+
+            <div class="mb-3">
+              {{ form_label(form.nom_m, 'Nom du matériel', {'label_attr': {'class': 'form-label'}}) }}
+              {{ form_widget(form.nom_m, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Ordinateur portable'}}) }}
+            </div>
+
+            <div class="mb-3">
+              {{ form_label(form.code_m, 'Code du matériel', {'label_attr': {'class': 'form-label'}}) }}
+              {{ form_widget(form.code_m, {'attr': {'class': 'form-control', 'placeholder': 'Ex: MTR-001'}}) }}
+            </div>
+
+            <div class="mb-4">
+              {{ form_label(form.ressource, 'Ressource assignée', {'label_attr': {'class': 'form-label'}}) }}
+              {{ form_widget(form.ressource, {
+                'attr': {
+                  'class': 'form-select',
+                  'id': 'materiel_ressource',
+                  'style': 'width: 100%;'
+                }
+              }) }}
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-dark w-100 mt-3">Enregistrer</button>
+            </div>
+
+            {{ form_end(form) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script>
+    function formatState(state) {
+      if (!state.id) {
+        return state.text;
+      }
+      var imgSrc = $(state.element).data('image');
+      if (imgSrc) {
+        var $state = $(
+          '<span><img src="' + imgSrc + '" alt="' + state.text + '" /> ' + state.text + '</span>'
+        );
+        return $state;
+      }
+      return state.text;
+    }
+
+    $(document).ready(function() {
+      $('#materiel_ressource').select2({
+        templateResult: formatState,
+        templateSelection: formatState,
+        minimumResultsForSearch: -1 // désactive la recherche
+      });
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Postes{% endblock %}
+
+{% block body %}
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2 bg-white my-2" id="sidenav-main">
+  <div class="sidenav-header">
+    <a class="navbar-brand px-4 py-3 m-0" href="{{ path('app_homes') }}">
+      <img src="{{ asset('assets/img/logo-ct-dark.png') }}" class="navbar-brand-img" width="26" height="26" alt="main_logo">
+      <span class="ms-1 text-sm text-dark">Admin Panel</span>
+    </a>
+  </div>
+ 
+  <hr class="horizontal dark mt-0 mb-2">
+  <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link text-dark d-flex align-items-center" href="{{ path('app_homes') }}">
+          <i class="material-symbols-rounded opacity-5 me-2">home</i>
+          <span class="nav-link-text ms-1">Accueil</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-dark" href="{{ path('list_effectifs') }}">
+          <i class="material-symbols-rounded opacity-5">groups</i>
+          <span class="nav-link-text ms-1">Effectifs</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active bg-gradient-dark text-white" href="{{ path('app_gestion_poste_list') }}">
+          <i class="material-symbols-rounded opacity-5">work</i>
+          <span class="nav-link-text ms-1">Postes</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<main class="main-content border-radius-lg">
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+              <h6 class="text-white ps-3">Liste des Postes</h6>
+              <a href="{{ path('app_gestion_poste_add') }}" class="btn btn-sm btn-light me-3">
+                <i class="material-symbols-rounded">add</i> Ajouter
+              </a>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Image</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nom du Poste</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Code</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Effectif associé</th>
+                    <th class="text-secondary opacity-7">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for poste in postes %}
+                    <tr>
+                      <td>
+                        {% if poste.imagePoste %}
+                          <img src="{{ asset('uploads/postes/' ~ poste.imagePoste) }}" 
+                               alt="Image du poste" 
+                               class="avatar avatar-sm border-radius-lg" 
+                               style="width:50px; height:50px; object-fit:cover;">
+                        {% else %}
+                          <span class="text-muted">Aucune image</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-bold mb-0">{{ poste.nomP }}</p>
+                      </td>
+                      <td>
+                        <p class="text-sm text-secondary mb-0">{{ poste.codeP }}</p>
+                      </td>
+                      <td>
+                        {% if poste.posteE %}
+                          {{ poste.posteE.nom }} {{ poste.posteE.prenom }}
+                        {% else %}
+                          <span class="text-muted">Aucun</span>
+                        {% endif %}
+                      </td>
+                      <td class="align-middle">
+                        <a href="#" class="text-secondary font-weight-bold text-xs me-2">
+                          <i class="material-symbols-rounded">edit</i>
+                        </a>
+                        <a href="#" class="text-danger font-weight-bold text-xs"
+                           onclick="return confirm('Supprimer ce poste ?');">
+                          <i class="material-symbols-rounded">delete</i>
+                        </a>
+                      </td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="5" class="text-center py-4">Aucun poste trouvé</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
