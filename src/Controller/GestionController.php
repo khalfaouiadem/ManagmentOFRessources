@@ -14,6 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -32,8 +34,12 @@ final class GestionController extends AbstractController
         $this->entityManager = $entityManagerParam;
     }
 #[Route('/AddEffectifs', name: 'add_effectifs', methods: ['GET', 'POST'])]
-public function AddEffec(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
-{
+public function AddEffec(
+    Request $request,
+    EntityManagerInterface $em,
+    SluggerInterface $slugger,
+    MailerInterface $mailer
+): Response {
     $effectifs = new Effect();
     $form = $this->createForm(EffectifsType::class, $effectifs);
     $form->handleRequest($request);
@@ -54,7 +60,6 @@ public function AddEffec(Request $request, EntityManagerInterface $em, SluggerIn
                 );
             } catch (FileException $e) {
                 $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
-                // Optionnel : retourner ou gérer l’erreur
             }
 
             $effectifs->setImageEffect($newFilename);
@@ -63,7 +68,40 @@ public function AddEffec(Request $request, EntityManagerInterface $em, SluggerIn
         $em->persist($effectifs);
         $em->flush();
 
-        $this->addFlash('success', 'Effectif ajouté avec succès !');
+       
+       try {
+                $emailContent = "
+                    <h2>Bonjour {$effectifs->getNom()},</h2>
+                    <p>Merci d'avoir rejoint notre plateforme <strong>ManagamentOfHumanRessources</strong> en tant que {$effectifs->getPoste()}  !</p>
+                    <p>Voici un récapitulatif de vos informations :</p>
+                    <ul>
+                        <li><strong>Nom :</strong> {$effectifs->getNom()}</li>
+                        <li><strong>Email :</strong> {$effectifs->getEmail()}</li>
+                    </ul>
+                    <p>Nous sommes ravis de collaborer avec vous.</p>
+                ";
+    
+                $email = (new Email())
+                    ->from('testprojetpi@gmail.com')
+                    ->to($effectifs->getEmail())  // You might want to use $sponsor->getEmail() here
+                    ->subject('Bienvenue parmi nos effectifs !')
+                    ->html($emailContent);
+    
+                // Envoi de l'email
+                $mailer->send($email);
+               
+    
+                // Si l'email est envoyé avec succès
+                $this->addFlash('success', 'Sponsor ajouté avec succès et e-mail envoyé à ' . $effectifs->getEmail());
+            } catch (\Exception $e) {
+                // Si l'envoi de l'email échoue
+              
+                $this->addFlash('danger', 'Une erreur est survenue lors de l\'envoi de l\'email.');
+                return $this->redirectToRoute('add_sponsor');
+            }
+    
+
+        $this->addFlash('success', 'Effectif ajouté avec succès et email envoyé !','à',$effectifs);
         return $this->redirectToRoute('list_effectifs');
     }
 
@@ -99,7 +137,6 @@ public function dashboard(): Response
 
 
 
-
  #[Route('/new', name: 'app_gestion_poste_add', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
@@ -124,6 +161,7 @@ public function dashboard(): Response
 
                 $poste->setImagePoste($newFilename);
             }
+
 
             $em->persist($poste);
             $em->flush();
