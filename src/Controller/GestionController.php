@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Effect;
 use App\Entity\Poste;
+use App\Entity\User;
 use App\Form\EffectifsType;
 use App\Form\PosteType;
 use App\Repository\EffectRepository;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
@@ -194,22 +196,24 @@ public function dashboard(): Response
         ]);
     }
     #[Route('/DeleteEffectifs/{id}', name: 'app_delete_effectifs', methods: ['GET'])]
-    public function DeleteEffectifs(int $id): Response
-    {
-        // Récupérer l'auteur par son ID
-        $effectifs = $this->effectRepo->find($id);
-        if (!$effectifs) {
-            throw $this->createNotFoundException('Effectifs non trouvé');
-        }   
-        // Supprimer l'auteur
-        $this->entityManager->remove($effectifs);
-        $this->entityManager->flush();      
-        // Rediriger vers la liste des auteurs
-        return $this->redirectToRoute('list_effectifs');
+   public function DeleteEffectifs(int $id): Response
+{
+    $effectif = $this->effectRepo->find($id);
+    if (!$effectif) {
+        throw $this->createNotFoundException('Effectif non trouvé');
+    }
 
+    // Supprimer ou détacher les postes liés
+    foreach ($effectif->getPostes() as $poste) {
+        $this->entityManager->remove($poste);
+    }
 
+    $this->entityManager->remove($effectif);
+    $this->entityManager->flush();
 
-    }    #[Route('/UpdateEffectifs/{id}', name: 'app_update_effectifs', methods: ['GET', 'POST'])]
+    return $this->redirectToRoute('list_effectifs');
+}
+       #[Route('/UpdateEffectifs/{id}', name: 'app_update_effectifs', methods: ['GET', 'POST'])]
     public function UpdateEffectifs(Request $request, int $id): Response   
     {
         // Récupérer l'auteur par son ID
@@ -236,5 +240,17 @@ public function dashboard(): Response
         
         ]);
     }
-   
+    #[Route('/create-admin', name: 'create_admin')]
+   public function createAdmin(EntityManagerInterface $em, UserPasswordHasherInterface $hasher)
+{
+    $admin = new User();
+    $admin->setEmail('akhalfaoui729@gmail.com');
+    $admin->setRoles(['ROLE_ADMIN']);
+    $admin->setPassword($hasher->hashPassword($admin, '12345678'));
+
+    $em->persist($admin);
+    $em->flush();
+
+    return new Response("Admin créé !");
+}
 }

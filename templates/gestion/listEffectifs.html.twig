@@ -106,13 +106,18 @@
                         {% endif %}
                       </td>
                       <td class="align-middle">
-                        <a href="#" class="text-secondary font-weight-bold text-xs me-2">
-                          <i class="material-symbols-rounded">edit</i>
-                        </a>
-                        <a href="#" class="text-danger font-weight-bold text-xs"
+                        {% if effectifs %}
+                          <a href="{{ path('app_update_effectifs', { id: effectif.id }) }}" class="text-secondary font-weight-bold text-xs me-2">
+                             <i class="material-symbols-rounded">edit</i> Modifier
+                                         </a>
+                        <a href="{{ path('app_delete_effectifs', { id: effectif.id }) }}" class="text-danger font-weight-bold text-xs"
                            onclick="return confirm('Supprimer cet effectif ?');">
-                          <i class="material-symbols-rounded">delete</i>
+                          <i class="material-symbols-rounded">delete</i> Supprimer
                         </a>
+                         {% endif %}
+
+
+
                       </td>
                     </tr>
                   {% else %}

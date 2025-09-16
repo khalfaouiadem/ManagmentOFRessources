@@ -26,7 +26,7 @@ public function home(): Response
 
     
 
-    #[Route('/', name: 'app_home')]
+    #[Route('/homes', name: 'app_home')]
     public function index(): Response
     {
         return $this->render('home/home.html.twig');
